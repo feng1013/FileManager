@@ -16,9 +16,10 @@ public class WebSecurityConfig {
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+		http.csrf().disable();
 		http
 			.authorizeHttpRequests((requests) -> requests
-				.requestMatchers("/", "/home", "/invalid", "/download").permitAll()
+				.requestMatchers("/", "/home", "/invalid", "/download", "/download/*").permitAll()
 				.anyRequest().authenticated()
 			)
 			.formLogin((form) -> form
@@ -35,7 +36,7 @@ public class WebSecurityConfig {
 		UserDetails user =
 			 User.withDefaultPasswordEncoder()
 				.username("user")
-				.password("password")
+				.password("0")
 				.roles("USER")
 				.build();
 

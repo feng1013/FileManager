@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 public class FileManagerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(FileManagerApplication.class, args);
+		ApplicationContext ctx = SpringApplication.run(FileManagerApplication.class, args);
 	}
 
 }

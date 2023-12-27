@@ -9,5 +9,11 @@
         <form th:action="@{/logout}" method="post">
             <input type="submit" value="Sign Out"/>
         </form>
+        <form action="/uploadFile" method="post" enctype="multipart/form-data">
+            <div>
+                <div>File to upload: <input type="file" name="fileName"></div>
+                <div><input type="submit" value="Upload!"></div>
+            </div>
+        </form>
     </body>
 </html>
