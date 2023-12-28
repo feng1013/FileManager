@@ -1,0 +1,16 @@
+firsttry-409213-308bc2765a15.json
+
+cloud-sql-proxy
+
+*.jpg
+*.jpeg
+
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+# Package Files #
+*.jar
+*.war

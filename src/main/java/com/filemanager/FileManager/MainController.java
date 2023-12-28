@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -27,11 +28,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+
 @Controller
 public class MainController {
 
+	@Autowired
+	private UserRepository userRepository;
+
 	@RequestMapping("/download/{id}")
 	public ResponseEntity<InputStreamResource> downloadFile(@PathVariable String id) {
+
+		for(User u : userRepository.findAll()){
+			System.out.println("id=" + u.getId());
+		}
+
 
 		if(!id.equals("111")){
 			HttpHeaders invalidPageHeader = new HttpHeaders();
@@ -76,8 +87,6 @@ public class MainController {
 			e.printStackTrace();
 			return "redirect:/error";
 		}
-
-
 
 		return "redirect:/hello";
 	}

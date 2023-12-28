@@ -2,3 +2,5 @@
 /Users/tyf/Desktop/GitRepo/FileManager/src/main/java/com/filemanager/FileManager/MvcConfig.java
 /Users/tyf/Desktop/GitRepo/FileManager/src/main/java/com/filemanager/FileManager/WebSecurityConfig.java
 /Users/tyf/Desktop/GitRepo/FileManager/src/main/java/com/filemanager/FileManager/FileManagerApplication.java
+/Users/tyf/Desktop/GitRepo/FileManager/src/main/java/com/filemanager/FileManager/UserRepository.java
+/Users/tyf/Desktop/GitRepo/FileManager/src/main/java/com/filemanager/FileManager/User.java

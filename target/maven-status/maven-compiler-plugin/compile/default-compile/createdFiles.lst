@@ -1,4 +1,6 @@
 com/filemanager/FileManager/WebSecurityConfig.class
+com/filemanager/FileManager/UserRepository.class
 com/filemanager/FileManager/MainController.class
+com/filemanager/FileManager/User.class
 com/filemanager/FileManager/MvcConfig.class
 com/filemanager/FileManager/FileManagerApplication.class

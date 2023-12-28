@@ -1,0 +1,27 @@
+version: "3"
+
+services:
+  cloudsql-proxy:
+    container_name: cloudsql-proxy
+    image: gcr.io/cloud-sql-connectors/cloud-sql-proxy:2.8.1
+    command: firsttry-409213:asia-east1:alexf-file-manager --credentials-file=/secrets/cloudsql/credentials.json --address 0.0.0.0 --port 3306
+    networks:
+      - dashboard
+    ports:
+      - 127.0.0.1:3306:3306
+    volumes:
+      - ./firsttry-409213-308bc2765a15.json:/secrets/cloudsql/credentials.json
+
+  dashboard:
+    container_name: file-manager
+    image: file-manager-10.2
+    networks:
+      - dashboard
+    ports:
+      - "8080:8080"
+    depends_on:
+      - "cloudsql-proxy"
+networks:
+  dashboard:
+    name: dashboard
+    driver: bridge
