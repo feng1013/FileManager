@@ -1,6 +1,12 @@
+/Users/tyf/Desktop/GitRepo/FileManager/src/main/java/com/filemanager/FileManager/FileService.java
 /Users/tyf/Desktop/GitRepo/FileManager/src/main/java/com/filemanager/FileManager/MainController.java
 /Users/tyf/Desktop/GitRepo/FileManager/src/main/java/com/filemanager/FileManager/MvcConfig.java
+/Users/tyf/Desktop/GitRepo/FileManager/src/main/java/com/filemanager/FileManager/FileLinkService.java
 /Users/tyf/Desktop/GitRepo/FileManager/src/main/java/com/filemanager/FileManager/WebSecurityConfig.java
+/Users/tyf/Desktop/GitRepo/FileManager/src/main/java/com/filemanager/FileManager/FileLink.java
 /Users/tyf/Desktop/GitRepo/FileManager/src/main/java/com/filemanager/FileManager/FileManagerApplication.java
+/Users/tyf/Desktop/GitRepo/FileManager/src/main/java/com/filemanager/FileManager/FileRepository.java
 /Users/tyf/Desktop/GitRepo/FileManager/src/main/java/com/filemanager/FileManager/UserRepository.java
 /Users/tyf/Desktop/GitRepo/FileManager/src/main/java/com/filemanager/FileManager/User.java
+/Users/tyf/Desktop/GitRepo/FileManager/src/main/java/com/filemanager/FileManager/File.java
+/Users/tyf/Desktop/GitRepo/FileManager/src/main/java/com/filemanager/FileManager/FileLinkRepository.java

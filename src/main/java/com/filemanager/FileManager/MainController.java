@@ -20,6 +20,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,8 +39,16 @@ public class MainController {
 	@Autowired
 	private UserRepository userRepository;
 
+	@Autowired
+	private FileService fileService;
+
 	@RequestMapping("/download/{id}")
 	public ResponseEntity<InputStreamResource> downloadFile(@PathVariable String id) {
+
+		// Will be anonymousUser if is not logged in.
+		System.out.println("[download] The current user is: " + getCurrentUserAuth().getName());
+
+
 
 		for(User u : userRepository.findAll()){
 			System.out.println("id=" + u.getId());
@@ -74,21 +85,51 @@ public class MainController {
 	}
 
 	@RequestMapping(value = "uploadFile", method = RequestMethod.POST)
-	public String uploadFile(@RequestParam(value = "fileName") MultipartFile file ){
-		System.out.println("Post method Called! the file is: " + file);
+	public String uploadFile(@RequestParam(value = "fileName") MultipartFile file){
 
-		Path destinationFile = Paths.get(file.getOriginalFilename()).normalize().toAbsolutePath();
-		System.out.println("The path is " + destinationFile);
-
-		try (InputStream inputStream = file.getInputStream()) {
-				Files.copy(inputStream, destinationFile,
-					StandardCopyOption.REPLACE_EXISTING);
-		} catch (IOException e) {
-			e.printStackTrace();
+		String owner = getCurrentUserAuth().getName();
+		if(owner == null || owner.equals("anonymousUser")){
 			return "redirect:/error";
 		}
 
-		return "redirect:/hello";
+		return fileService.uploadFile(file, getCurrentUserAuth().getName());
+
+		// System.out.println("Post method Called! the file is: " + file);
+		// System.out.println("The file name: " + file.getOriginalFilename());
+		// System.out.println("[upload] The current user is: " + getCurrentUserAuth().getName());
+
+		// System.out.println(Paths.get("/").toAbsolutePath());
+		// System.out.println(Paths.get(".").toAbsolutePath());
+
+		// Path destinationFile = Paths.get(file.getOriginalFilename()).normalize().toAbsolutePath();
+		// System.out.println("The path is " + destinationFile);
+
+		// try (InputStream inputStream = file.getInputStream()) {
+		// 		Files.copy(inputStream, destinationFile,
+		// 			StandardCopyOption.REPLACE_EXISTING);
+		// } catch (IOException e) {
+		// 	e.printStackTrace();
+		// 	return "redirect:/error";
+		// }
+
+		// return "redirect:/hello";
+	}
+
+	@RequestMapping(value = "/check", method = RequestMethod.GET)
+	public String check(){
+		for(User u: userRepository.findByUsername("Watson")){
+			for(File f: u.getFiles()){
+				System.out.println("File belongs to " + u.getUsername() + ": " + f.getFilename());
+			}
+		}
+
+		return "/hello";
+	}
+
+
+
+	private Authentication getCurrentUserAuth(){
+		return SecurityContextHolder.getContext().getAuthentication();
 	}
 
 }

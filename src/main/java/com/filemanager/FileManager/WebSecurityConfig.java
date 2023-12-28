@@ -1,5 +1,7 @@
 package com.filemanager.FileManager;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,12 +16,15 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class WebSecurityConfig {
 
+	@Autowired
+	private UserRepository userRepository;
+
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http.csrf().disable();
 		http
 			.authorizeHttpRequests((requests) -> requests
-				.requestMatchers("/", "/home", "/invalid", "/download", "/download/*").permitAll()
+				.requestMatchers("/", "/home", "/invalid", "/download", "/download/*", "/check").permitAll()
 				.anyRequest().authenticated()
 			)
 			.formLogin((form) -> form
@@ -33,13 +38,20 @@ public class WebSecurityConfig {
 
 	@Bean
 	public UserDetailsService userDetailsService() {
-		UserDetails user =
+
+		InMemoryUserDetailsManager userDetailsManager = new InMemoryUserDetailsManager();
+
+		for(com.filemanager.FileManager.User userData : userRepository.findAll()){
+			UserDetails user =
 			 User.withDefaultPasswordEncoder()
-				.username("user")
-				.password("0")
+				.username(userData.getUsername())
+				.password(userData.getPassword())
 				.roles("USER")
 				.build();
 
-		return new InMemoryUserDetailsManager(user);
+			userDetailsManager.createUser(user);
+		}
+
+		return userDetailsManager;
 	}
 }
