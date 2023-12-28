@@ -29,7 +29,7 @@ public class FileLinkService {
 	@Autowired
 	private FileLinkRepository fileLinkRepository;
 
-	private static final long TIME_TO_EXPIRE_IN_SEC = 10;
+	private static final long TIME_TO_EXPIRE_IN_SEC = 21600;
 
 
 	public String generateLink(String fileId){
@@ -44,6 +44,7 @@ public class FileLinkService {
 		FileLink fileLink = new FileLink();
 		fileLink.setLinkValue(conductHash(originString));
 		fileLink.setFileId(fileId);
+		fileLink.setCreatedTime(String.valueOf(currentTime));
 		fileLink.setExpireTime(String.valueOf(expireTime));
 
 		fileLinkRepository.save(fileLink);
@@ -52,6 +53,19 @@ public class FileLinkService {
 
 
 		return fileLink.getLinkValue();
+	}
+
+	public boolean verifyLink(String linkValue){
+
+		FileLink fileLink = fileLinkRepository.findById(linkValue).get();
+		long currentTime = System.currentTimeMillis();
+		long createdTime = Long.valueOf(fileLink.getCreatedTime());
+
+		System.out.println("Expire time is: " + Long.valueOf(fileLink.getExpireTime()));
+		System.out.println("currentTime is: " + currentTime);
+		System.out.println("Diff = " + (Long.valueOf(fileLink.getExpireTime())-currentTime));
+
+		return currentTime - createdTime < TIME_TO_EXPIRE_IN_SEC * 1000;
 	}
 
 

@@ -26,10 +26,6 @@ public class File {
   	@Column(name="UserId")
   	private Integer userId;
 
-  	// @Id
-  	// @GeneratedValue(strategy=GenerationType.IDENTITY)
-  	// private Integer extId;
-
   	@OneToMany
   	@JoinColumn(name="FileId")
   	private Set<FileLink> fileLinks;
@@ -58,12 +54,4 @@ public class File {
   	public void setUserId(Integer userId){
   		this.userId = userId;
   	}
-
-  	// public Integer getExtId(){
-  	// 	return extId;
-  	// }
-
-  	// public void setExtId(Integer extId){
-  	// 	this.extId = extId;
-  	// }
 }

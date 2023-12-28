@@ -25,6 +25,8 @@ public class FileLink {
 
     private String expireTime;
 
+    private String createdTime;
+
     public String getLinkValue(){
       return linkValue;
     }
@@ -49,4 +51,11 @@ public class FileLink {
       this.expireTime = expireTime;
     }
 
+    public String getCreatedTime(){
+      return createdTime;
+    }
+
+    public void setCreatedTime(String createdTime){
+      this.createdTime = createdTime;
+    }
 }

@@ -5,6 +5,7 @@ com/filemanager/FileManager/WebSecurityConfig.class
 com/filemanager/FileManager/UserRepository.class
 com/filemanager/FileManager/File.class
 com/filemanager/FileManager/FileLink.class
+com/filemanager/FileManager/FileWrapper.class
 com/filemanager/FileManager/User.class
 com/filemanager/FileManager/MvcConfig.class
 com/filemanager/FileManager/FileService.class

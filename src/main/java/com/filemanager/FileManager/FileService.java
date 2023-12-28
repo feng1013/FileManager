@@ -2,18 +2,26 @@ package com.filemanager.FileManager;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.UnsupportedEncodingException;
 import java.io.InputStream;
 import java.io.IOException;
 
+import java.net.URLEncoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.nio.charset.StandardCharsets;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.http.HttpHeaders;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 
 @Service
 public class FileService {
@@ -25,12 +33,15 @@ public class FileService {
 	private FileRepository fileRepository;
 
 	@Autowired
+	private FileLinkRepository fileLinkRepository;
+
+	@Autowired
 	private FileLinkService fileLinkService;
 
 	// Should be "/tmp/files" if running under Google Application Engine.
 	private static final String PATH_TO_DESTINATION_DIR = "./files";
 
-	protected String uploadFile(MultipartFile file, String owner){
+	public String uploadFile(MultipartFile file, String owner){
 		try {
 			if(!hasDestinationDirectory()) Files.createDirectories(Paths.get(PATH_TO_DESTINATION_DIR).toAbsolutePath());
 
@@ -43,8 +54,6 @@ public class FileService {
 			if(ext.length() > 0) {
 				storingFileName = storingFileName + "." + ext;
 			}
-
-						System.out.println("in 44: " + file.getOriginalFilename());
 
 			generateAndSaveDbFileObject(file, storingFileName, owner);
 
@@ -66,13 +75,42 @@ public class FileService {
 		return "redirect:/hello";
 	}
 
+	public ResponseEntity<InputStreamResource> downloadFile(String linkValue){
+		FileLink fileLink = fileLinkRepository.findById(linkValue).get();
+		System.out.println("in 80 fileLink's fileId = " + fileLink.getFileId());
+
+		com.filemanager.FileManager.File dbFile = fileRepository.findById(fileLink.getFileId()).get();
+
+
+		try{
+			String fileRoute = PATH_TO_DESTINATION_DIR + "/" + dbFile.getId();
+			System.out.println("in 87 the fileRoute = " + fileRoute);
+			InputStream in = new FileInputStream(fileRoute);
+			System.out.println("Download stream created!!!");
+
+			HttpHeaders headers = new HttpHeaders();
+        	headers.add(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=\"%s\"", URLEncoder.encode(dbFile.getFilename(), StandardCharsets.UTF_8.name())));
+
+			return ResponseEntity.ok()
+			.headers(headers)
+			.contentType(MediaType.APPLICATION_OCTET_STREAM)
+    		.body(new InputStreamResource(in));
+		} catch (FileNotFoundException e){
+			System.out.println("File not found");
+
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		} catch (UnsupportedEncodingException e){
+			System.out.println("Error when transforming file names ");
+
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
 	private boolean hasDestinationDirectory(){
 		return new File(PATH_TO_DESTINATION_DIR).exists();
 	}
 
 	private void generateAndSaveDbFileObject(MultipartFile file, String storingFileName, String owner){
-
-					System.out.println("in 68: " + file.getOriginalFilename());
 
 		int userId = userRepository.findByUsername(owner).get(0).getId();
 

@@ -15,5 +15,20 @@
                 <div><input type="submit" value="Upload!"></div>
             </div>
         </form>
+
+        <div>
+            <ul>
+                <li th:each="wrapper : ${wrappers}">
+                    <span>
+                        <div th:text="${wrapper.file.filename}"></div>
+                        <div th:text="${wrapper.fullLink}"></div>
+                        <form action="/generateLink" method="post">
+                            <input type="submit" value="Generate!">
+                            <input type="hidden" name="id" th:value="${wrapper.file.id}">
+                        </form>
+                    </span>
+                </li>
+            </ul>
+        </div>
     </body>
 </html>

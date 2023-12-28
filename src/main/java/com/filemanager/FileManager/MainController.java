@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.io.IOException;
+import java.util.stream.Collectors;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,7 +32,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
+import org.springframework.validation.BindingResult;
 
+import java.util.List;
 import java.util.ArrayList;
 
 @Controller
@@ -40,7 +45,17 @@ public class MainController {
 	private UserRepository userRepository;
 
 	@Autowired
+	private FileRepository fileRepository;
+
+	@Autowired
 	private FileService fileService;
+
+	@Autowired
+	private FileLinkService fileLinkService;
+
+	@Autowired
+	private FileLinkRepository fileLinkRepository;
+
 
 	@RequestMapping("/download/{id}")
 	public ResponseEntity<InputStreamResource> downloadFile(@PathVariable String id) {
@@ -48,84 +63,75 @@ public class MainController {
 		// Will be anonymousUser if is not logged in.
 		System.out.println("[download] The current user is: " + getCurrentUserAuth().getName());
 
-
-
-		for(User u : userRepository.findAll()){
-			System.out.println("id=" + u.getId());
-		}
-
-
-		if(!id.equals("111")){
+		if(!fileLinkService.verifyLink(id)){
+			System.out.println("Link expired!");
 			HttpHeaders invalidPageHeader = new HttpHeaders();
 			invalidPageHeader.add("Location", "/invalid");
 			return new ResponseEntity<>(invalidPageHeader, HttpStatus.FOUND);
+		} else {
+			return fileService.downloadFile(id);
 		}
 
-		try{
-			String filename = "4700720.jpg";
-			InputStream in = new FileInputStream(filename);
-			System.out.println("stream created!!! 12/27 05:08");
-
-			HttpHeaders headers = new HttpHeaders();
-        	headers.add(HttpHeaders.CONTENT_DISPOSITION, String.format("attachment; filename=\"%s\"", URLEncoder.encode(filename, StandardCharsets.UTF_8.name())));
-
-			return ResponseEntity.ok()
-			.headers(headers)
-			.contentType(MediaType.APPLICATION_OCTET_STREAM)
-    		.body(new InputStreamResource(in));
-		} catch (FileNotFoundException e){
-			System.out.println("File not found");
-
-			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-		} catch (UnsupportedEncodingException e){
-			System.out.println("Error when transforming file names ");
-
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
 	}
 
 	@RequestMapping(value = "uploadFile", method = RequestMethod.POST)
 	public String uploadFile(@RequestParam(value = "fileName") MultipartFile file){
 
-		String owner = getCurrentUserAuth().getName();
-		if(owner == null || owner.equals("anonymousUser")){
+		String ownerName = getCurrentUserAuth().getName();
+		if(ownerName == null || ownerName.equals("anonymousUser")){
 			return "redirect:/error";
 		}
 
 		return fileService.uploadFile(file, getCurrentUserAuth().getName());
-
-		// System.out.println("Post method Called! the file is: " + file);
-		// System.out.println("The file name: " + file.getOriginalFilename());
-		// System.out.println("[upload] The current user is: " + getCurrentUserAuth().getName());
-
-		// System.out.println(Paths.get("/").toAbsolutePath());
-		// System.out.println(Paths.get(".").toAbsolutePath());
-
-		// Path destinationFile = Paths.get(file.getOriginalFilename()).normalize().toAbsolutePath();
-		// System.out.println("The path is " + destinationFile);
-
-		// try (InputStream inputStream = file.getInputStream()) {
-		// 		Files.copy(inputStream, destinationFile,
-		// 			StandardCopyOption.REPLACE_EXISTING);
-		// } catch (IOException e) {
-		// 	e.printStackTrace();
-		// 	return "redirect:/error";
-		// }
-
-		// return "redirect:/hello";
 	}
 
-	@RequestMapping(value = "/check", method = RequestMethod.GET)
-	public String check(){
-		for(User u: userRepository.findByUsername("Watson")){
-			for(File f: u.getFiles()){
-				System.out.println("File belongs to " + u.getUsername() + ": " + f.getFilename());
-			}
+	@RequestMapping(value = "generateLink", method = RequestMethod.POST)
+	public String generateLink(@RequestParam(value = "id") String id, Model model){
+		System.out.println("The id = " + id);
+		fileLinkService.generateLink(id);
+
+		model.addAttribute("wrappers", composeFilesWrapperForUser());
+
+		return "hello";
+	}
+
+	@RequestMapping(value = "/hello", method = RequestMethod.GET)
+	public String listAllFiles(Model model) throws IOException {
+		model.addAttribute("wrappers", composeFilesWrapperForUser());
+
+		return "hello";
+	}
+
+	private List<FileWrapper> composeFilesWrapperForUser(){
+		String ownerName = getCurrentUserAuth().getName();
+		User user = userRepository.findByUsername(ownerName).get(0);
+
+		List<File> files = fileRepository.findByUserId(user.getId());
+		ArrayList<FileWrapper> wrappers = new ArrayList<>();
+
+		for(File f : files) {
+			FileWrapper wrapper = new FileWrapper();
+			wrapper.setFile(f);
+			wrapper.setFullLink(adjustWithFullLink(f));
+			wrappers.add(wrapper);
 		}
 
-		return "/hello";
+		return wrappers;
 	}
 
+	private String adjustWithFullLink(File file){
+		String prefix = "http://localhost:8080/download/";
+		System.out.println("the file id is: " + file.getId());
+		FileLink fileLink = fileLinkRepository.findByFileId(file.getId()).get(0);
+
+		if(fileLinkService.verifyLink(fileLink.getLinkValue())){
+			System.out.println(prefix + fileLink.getLinkValue() + "verified!");
+			return prefix + fileLink.getLinkValue();
+		} else {
+			System.out.println("Nah!");
+			return "";
+		}
+	}
 
 
 	private Authentication getCurrentUserAuth(){
