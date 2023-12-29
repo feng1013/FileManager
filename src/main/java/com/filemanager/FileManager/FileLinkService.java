@@ -38,9 +38,6 @@ public class FileLinkService {
 		long expireTime = currentTime + TIME_TO_EXPIRE_IN_SEC * 1000;
 		String originString = fileId + "_" + currentTime;
 
-		System.out.println("fileId = " + fileId);
-		System.out.println("originString = " + originString);
-
 		FileLink fileLink = new FileLink();
 		fileLink.setLinkValue(conductHash(originString));
 		fileLink.setFileId(fileId);
@@ -66,9 +63,7 @@ public class FileLinkService {
 		long currentTime = System.currentTimeMillis();
 		long createdTime = Long.valueOf(fileLink.getCreatedTime());
 
-		System.out.println("Expire time is: " + Long.valueOf(fileLink.getExpireTime()));
-		System.out.println("currentTime is: " + currentTime);
-		System.out.println("Diff = " + (Long.valueOf(fileLink.getExpireTime())-currentTime));
+		System.out.println(linkValue + " valid? " + (currentTime - createdTime < TIME_TO_EXPIRE_IN_SEC * 1000));
 
 		return currentTime - createdTime < TIME_TO_EXPIRE_IN_SEC * 1000;
 	}

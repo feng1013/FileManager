@@ -38,6 +38,9 @@ import org.springframework.validation.BindingResult;
 import java.util.List;
 import java.util.ArrayList;
 
+/**
+ * The main controller of the MVC. 
+ */ 
 @Controller
 public class MainController {
 
@@ -57,6 +60,9 @@ public class MainController {
 	private FileLinkRepository fileLinkRepository;
 
 
+	/**
+	 * Verify whether the link is still valid. Only initiate the download if so.
+	 */ 
 	@RequestMapping("/download/{id}")
 	public ResponseEntity<InputStreamResource> downloadFile(@PathVariable String id) {
 
@@ -85,9 +91,13 @@ public class MainController {
 		return fileService.uploadFile(file, getCurrentUserAuth().getName());
 	}
 
+	/**
+	 * Handles the generateLink request.
+	 * 
+	 * This method will generate the download link for the specified file.
+	 */ 
 	@RequestMapping(value = "generateLink", method = RequestMethod.POST)
 	public String generateLink(@RequestParam(value = "id") String id, Model model){
-		System.out.println("The id = " + id);
 		fileLinkService.generateLink(id);
 
 		model.addAttribute("wrappers", composeFilesWrapperForUser());
@@ -95,6 +105,11 @@ public class MainController {
 		return "main";
 	}
 
+	/**
+	 * Lists all the files for the given user.
+	 * 
+	 * Please be noted that the user ID is not passed in. Since in our model this method could only be called after user logged in, this method calls getCurrentUserAuth() to retrieve the user.
+	 */ 
 	@RequestMapping(value = "/main", method = RequestMethod.GET)
 	public String listAllFiles(Model model) throws IOException {
 		model.addAttribute("wrappers", composeFilesWrapperForUser());
