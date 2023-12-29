@@ -29,7 +29,7 @@ public class FileLinkService {
 	@Autowired
 	private FileLinkRepository fileLinkRepository;
 
-	private static final long TIME_TO_EXPIRE_IN_SEC = 21600;
+	private static final long TIME_TO_EXPIRE_IN_SEC = 20;
 
 
 	public String generateLink(String fileId){
@@ -46,6 +46,11 @@ public class FileLinkService {
 		fileLink.setFileId(fileId);
 		fileLink.setCreatedTime(String.valueOf(currentTime));
 		fileLink.setExpireTime(String.valueOf(expireTime));
+
+		if(fileLinkRepository.findByFileId(fileId).size() > 0){
+			fileLinkRepository.deleteByFileId(fileId);
+		}
+
 
 		fileLinkRepository.save(fileLink);
 

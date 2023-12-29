@@ -1,6 +1,8 @@
 package com.filemanager.FileManager;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.jpa.repository.Modifying;
 import java.util.List;
 import com.filemanager.FileManager.FileLink;
 
@@ -10,5 +12,9 @@ import com.filemanager.FileManager.FileLink;
 public interface FileLinkRepository extends CrudRepository<FileLink, String> {
 
 	public List<FileLink> findByFileId(String fileId);
+
+	@Modifying
+	@Transactional
+	public void deleteByFileId(String fileId);
 
 }

@@ -125,11 +125,9 @@ public class MainController {
 		FileLink fileLink = fileLinkRepository.findByFileId(file.getId()).get(0);
 
 		if(fileLinkService.verifyLink(fileLink.getLinkValue())){
-			System.out.println(prefix + fileLink.getLinkValue() + "verified!");
 			return prefix + fileLink.getLinkValue();
 		} else {
-			System.out.println("Nah!");
-			return "";
+			return "N/A";
 		}
 	}
 

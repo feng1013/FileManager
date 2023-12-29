@@ -45,8 +45,6 @@ public class FileService {
 		try {
 			if(!hasDestinationDirectory()) Files.createDirectories(Paths.get(PATH_TO_DESTINATION_DIR).toAbsolutePath());
 
-			System.out.println("in 34: " + file.getOriginalFilename());
-
 			long currentTime = System.currentTimeMillis();
 			String storingFileName = owner + "_" + currentTime;
 			
@@ -72,7 +70,7 @@ public class FileService {
 			return "redirect:/error";
 		}
 
-		return "redirect:/hello";
+		return "redirect:/main";
 	}
 
 	public ResponseEntity<InputStreamResource> downloadFile(String linkValue){
