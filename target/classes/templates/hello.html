@@ -6,10 +6,37 @@
     </head>
     <body>
         <h1 th:inline="text">Hello <span th:remove="tag" sec:authentication="name">thymeleaf</span>!</h1>
+        <form action="/uploadFile" method="post" enctype="multipart/form-data">
+            <dl>
+                <dt>File to upload: <input type="file" name="fileName"><input type="submit" value="Upload!"></dt>
+            </dl>
+        </form>
+
+        <div>
+            <table>
+                <tr>
+                    <td>File Name</td><td>Download Link</td><td></td>
+                </tr>
+                <tr th:each="wrapper : ${wrappers}">
+                    <td th:text="${wrapper.file.filename}"></td>
+                    <td th:text="${wrapper.fullLink}"></td>
+                    <td >
+                        <form th:if="${not #lists.isEmpty(wrappers)}" action="/generateLink" method="post">
+                            <input type="submit" value="Generate!">
+                            <input type="hidden" name="id" th:value="${wrapper.file.id}">
+                        </form>
+                    </td>
+                </tr>
+            </table>
+        </div>
         <form th:action="@{/logout}" method="post">
             <input type="submit" value="Sign Out"/>
         </form>
-        <form action="/uploadFile" method="post" enctype="multipart/form-data">
+        
+        <!-- <form th:action="@{/logout}" method="post">
+            <input type="submit" value="Sign Out"/>
+        </form> -->
+        <!-- <form action="/uploadFile" method="post" enctype="multipart/form-data">
             <div>
                 <div>File to upload: <input type="file" name="fileName"></div>
                 <div><input type="submit" value="Upload!"></div>
@@ -29,6 +56,6 @@
                     </span>
                 </li>
             </ul>
-        </div>
+        </div> -->
     </body>
 </html>

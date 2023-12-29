@@ -1,0 +1,54 @@
+<!DOCTYPE HTML>
+<!--
+	Transitive by TEMPLATED
+	templated.co @templatedco
+	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+--><html><head><title>Generic - Transitive by TEMPLATED</title><meta charset="utf-8"><meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="stylesheet" href="./assets/css/main.css"></head><body class="subpage">
+
+<!-- Header -->
+<header id="header"><div class="logo"><a href="index.html">Transitive <span>by TEMPLATED</span></a></div>
+</header><!-- One --><section id="one" class="wrapper style2"><div class="inner">
+        <div class="box">
+            <div class="content">
+                <header class="align-center"><h2>Lorem ipsum dolor</h2>
+                    <p>maecenas feugiat ex purus, quis volutpat lacus placerat</p>
+                </header><hr><p> Cras aliquet urna ut sapien tincidunt, quis malesuada elit facilisis. Vestibulum sit amet tortor velit. Nam elementum nibh a libero pharetra elementum. Maecenas feugiat ex purus, quis volutpat lacus placerat malesuada. Praesent in sem ex. Morbi mattis sapien pretium tellus venenatis, at egestas urna ornare.</p>
+                <p>Vivamus fermentum nibh vel pharetra blandit. Cras a purus urna. Sed et libero ex. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Suspendisse id hendrerit felis. Nulla viverra tempor dui at congue. Pellentesque quis nulla ornare, congue nisi id, finibus nulla. Aliquam sit amet hendrerit purus. Donec libero massa, posuere fermentum eros sit amet, maximus fringilla augue. Maecenas at rhoncus lorem. Vivamus ultricies consequat est, efficitur convallis libero. Vivamus rutrum semper mauris, vitae consequat eros tempor ac. Pellentesque et ornare sapien</p>
+
+                <div class="align-center">
+                    <form action="/uploadFile" method="post" enctype="multipart/form-data">
+                        <dl>
+                            <dt>File to upload: <input type="file" name="fileName"><input type="submit" value="Upload!"></dt>
+                        </dl>
+                    </form>
+
+                    <div>
+                        <table>
+                            <tr>
+                                <td>File Name</td><td>Download Link</td><td></td>
+                            </tr>
+                            <tr th:each="wrapper : ${wrappers}">
+                                <td th:text="${wrapper.file.filename}"></td>
+                                <td th:text="${wrapper.fullLink}"></td>
+                                <td >
+                                    <form th:if="${not #lists.isEmpty(wrappers)}" action="/generateLink" method="post">
+                                        <input type="submit" value="Generate!">
+                                        <input type="hidden" name="id" th:value="${wrapper.file.id}">
+                                    </form>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <form th:action="@{/logout}" method="post">
+                        <input type="submit" value="Sign Out"/>
+                    </form>
+                </div>
+            </div>
+            
+
+        </div>
+    </div>
+</section>
+
+<!-- Scripts -->
+<script src="assets/js/jquery.min.js"></script><script src="assets/js/jquery.scrolly.min.js"></script><script src="assets/js/jquery.scrollex.min.js"></script><script src="assets/js/skel.min.js"></script><script src="assets/js/util.js"></script><script src="assets/js/main.js"></script></body></html>

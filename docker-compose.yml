@@ -14,7 +14,7 @@ services:
 
   dashboard:
     container_name: file-manager
-    image: file-manager-10.2
+    image: file-manager-11
     networks:
       - dashboard
     ports:

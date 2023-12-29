@@ -92,14 +92,14 @@ public class MainController {
 
 		model.addAttribute("wrappers", composeFilesWrapperForUser());
 
-		return "hello";
+		return "main";
 	}
 
-	@RequestMapping(value = "/hello", method = RequestMethod.GET)
+	@RequestMapping(value = "/main", method = RequestMethod.GET)
 	public String listAllFiles(Model model) throws IOException {
 		model.addAttribute("wrappers", composeFilesWrapperForUser());
 
-		return "hello";
+		return "main";
 	}
 
 	private List<FileWrapper> composeFilesWrapperForUser(){

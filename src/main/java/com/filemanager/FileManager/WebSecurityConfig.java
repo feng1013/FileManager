@@ -24,7 +24,8 @@ public class WebSecurityConfig {
 		http.csrf().disable();
 		http
 			.authorizeHttpRequests((requests) -> requests
-				.requestMatchers("/", "/home", "/invalid", "/download", "/download/*", "/check").permitAll()
+				.requestMatchers("/", "/home", "/invalid", "/download", "/download/*", "/assets").permitAll()
+				.requestMatchers("/resources/**", "/static/**", "/css/**", "/js/**", "/img/**", "/icon/**", "/assets/**").permitAll()
 				.anyRequest().authenticated()
 			)
 			.formLogin((form) -> form
